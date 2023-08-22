@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     database_url: str = 'sqlite+aiosqlite:///./fastapi.db'
     secret: str = 'p@$$w0rd'
 
+    name_max_length: int = 100
+
     class Config:
         env_file = '.env'
 

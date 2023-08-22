@@ -3,6 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Extra, Field, validator
 from pydantic.types import PositiveInt
+from typing_extensions import Annotated
 
 
 class CharityProjectBase(BaseModel):
@@ -12,8 +13,8 @@ class CharityProjectBase(BaseModel):
 
 
 class CharityProjectCreate(CharityProjectBase):
-    name: str = Field(..., min_length=1, max_length=100)
-    description: str = Field(..., min_length=1)
+    name: Annotated[str, Field(min_length=1, max_length=100)]
+    description: Annotated[str, Field(min_length=1)]
     full_amount: PositiveInt
 
 

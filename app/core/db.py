@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, DateTime, Boolean
+from sqlalchemy import CheckConstraint, Column, Integer, DateTime, Boolean
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, declared_attr, sessionmaker
 
@@ -22,6 +22,11 @@ Base = declarative_base(cls=PreBase)
 
 class ABCBase(Base):
     __abstract__ = True
+    __table_args__ = (
+        CheckConstraint(
+            '0 <= invested_amount AND invested_amount <= full_amount'
+        ),
+    )
 
     create_date = Column(DateTime, default=datetime.now)
     close_date = Column(DateTime)
@@ -34,7 +39,7 @@ class ABCBase(Base):
 engine = create_async_engine(settings.database_url)
 
 # для асинхронной работы - множественное создание сессий
-AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession)
+AsyncSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 
 async def get_async_session():

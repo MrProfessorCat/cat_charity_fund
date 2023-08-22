@@ -1,7 +1,7 @@
 from typing import Optional
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import select
+from sqlalchemy import select, false
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import User
@@ -60,3 +60,34 @@ class CRUDBase:
         await session.delete(db_obj)
         await session.commit()
         return db_obj
+
+    async def get_all_active(self, session: AsyncSession):
+        all_active_items = await session.execute(
+            select(self.model).where(
+                self.model.fully_invested == false()
+            ).order_by(self.model.create_date)
+        )
+        return all_active_items.scalars().all()
+
+    async def get_by_user(
+        self, session: AsyncSession, user: User
+    ):
+        if not getattr(self.model, 'user_id', None):
+            raise AttributeError(
+                'Для использования метода get_by_user '
+                'у модели должен быть внешний ключ на User'
+            )
+        items = await session.execute(
+            select(self.model).where(
+                self.model.user_id == user.id
+            )
+        )
+        return items.scalars().all()
+
+    async def get_by_name(self, name: str, session: AsyncSession):
+        item = await session.execute(
+            select(self.model).where(
+                self.model.name == name
+            )
+        )
+        return item.scalars().first()

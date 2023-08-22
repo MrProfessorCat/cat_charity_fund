@@ -73,7 +73,7 @@ async def check_name_duplicate(
     Не должно быть два проекта с одинаковыми именами
     """
     if charity_project_name:
-        charity_project = await charity_project_crud.get_charity_project_by_name(
+        charity_project = await charity_project_crud.get_by_name(
             charity_project_name, session
         )
         if charity_project:
