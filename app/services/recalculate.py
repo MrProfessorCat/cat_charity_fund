@@ -48,5 +48,5 @@ def make_recalculation(
         # либо оставшаяся необходимая сумма проекта меньше суммы нового доната
         else:
             target.invested_amount += exists_amount
-            fully_invested(target)
+            modified_sources.append(fully_invested(source))
     return modified_sources
